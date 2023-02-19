@@ -101,9 +101,7 @@ class Employee(ABC):
     
     @property
     def id_number(self)-> int:
-        """
-        Getter for employee id.
-        """
+        """Getter for employee id."""
         return self.id_number
     
     def __str__(self)-> str:
@@ -116,7 +114,7 @@ class Employee(ABC):
         id_name = "{}:{}".format(self.id_number, self.name)
         return id_name
 
-    def __repr__(self)-> list:
+    def __repr__(self)-> str:
         """
         Used for saving employee to disk.
 
@@ -141,9 +139,9 @@ class Salaried(Employee):
     
     """
 
-    def __init__(self, name: str, email: str, image:(str), id_number: int, _yearly: int):
+    def __init__(self, name: str, email: str, image:(str), id_number: int, yearly: int):
         super().__init__(name, email, image,id_number)
-        self._yearly = _yearly
+        self._yearly = yearly
 
     @property
     def yearly(self)-> int:
@@ -182,13 +180,17 @@ class Salaried(Employee):
             self._yearly = value
 
     @property
-    def calc_pay(self):
+    def calc_pay(self)-> float:
         """
         Calculates the salaried employees weekly pay. 
+        
+        Returns:
+            Salaried employees weekly pay
+
         """
         return self._yearly / 52.0
 
-    def __repr__(self):
+    def __repr__(self)-> str:
         """
         Used for saving employee to disk.
 
@@ -230,7 +232,7 @@ class Executive(Salaried):
         #how to check for ENUMS?
         pass
 
-    def __repr__(self):
+    def __repr__(self)-> str:
         """
         Used for storing saving employee to disk.
 
@@ -318,7 +320,7 @@ class Hourly(Employee):
         """
         return self._hourly * 40
 
-    def __repr__(self):
+    def __repr__(self)-> str:
         """
         Used for saving employee to disk.
 
@@ -362,7 +364,7 @@ class Permanent(Hourly):
         value = datetime.strptime(value,'%m/%d/%y')
         self._hire_date = value
 
-    def __repr__(self):
+    def __repr__(self)-> str:
         """
         Used for saving employee to disk.
 
@@ -406,7 +408,7 @@ class Temp(Hourly):
 
 
 
-    def __repr__(self):
+    def __repr__(self)-> str:
         """
         Used for saving employee to disk.
 
