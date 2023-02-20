@@ -161,7 +161,7 @@ class Salaried(Employee):
             list containing employee name, email and their image, yearly salary.
         """
         
-        return f'{self.name}, {self.email}, {self.image}, {self._yearly}'
+        return f'{super.__repr__()}, {self._yearly}'
 
     @yearly.setter
     def yearly(self, value: int)-> None:
@@ -198,7 +198,7 @@ class Salaried(Employee):
             list containing employee name, email, their image, yearly salary.
         """
         #When do add generating that id with a static variable?
-        return f'{self.name}, {self.email}, {self.image}, {self._yearly}'
+        return f'{super.__repr__()}, {self._yearly}'
 
 
 class Executive(Salaried):
@@ -230,7 +230,10 @@ class Executive(Salaried):
             InvalidRoleException: if value does not match enum values.
         """
         #how to check for ENUMS?
-        pass
+        if not isinstance(self._role,  Role):
+            raise InvalidRoleException
+        else:
+            self._role = Role(value).name
 
     def __repr__(self)-> str:
         """
@@ -239,8 +242,8 @@ class Executive(Salaried):
         Returns 
             list containing executives name, email, their image, salary, and role.
         """
-        return f'{self.name}, {self.email}, {self.image}, {self._yearly}, {self._role}'
-        
+        return f'{super.__repr__()}, {self._role}'
+
 
 class Manager(Salaried):
     """A Manager is a Salaried Employee with no additional information held.  May want to add
@@ -268,6 +271,10 @@ class Manager(Salaried):
         Parameters
             value(int): Integer representation for what department the manager belongs to.
         """
+        if not isinstance(self._department,  Department):
+            raise InvalidDepartmentException
+        else:
+            self.department = Department(value).name
 
 
 class Hourly(Employee):
@@ -328,7 +335,7 @@ class Hourly(Employee):
             list containing employee name, email and their image and hourly rate.
         """
         #When do add generating that id with a static variable?
-        return f'{self.name}, {self.email}, {self.image}, {self._hourly}'
+        return f'{super.__repr__()}, {self._hourly}'
 
 
 class Permanent(Hourly):
@@ -371,7 +378,7 @@ class Permanent(Hourly):
         Returns 
             list containing employee name, email, their image, hourly rate, and hire date.
         """
-        return f'{self.name}, {self.email}, {self.image}, {self._hourly}, {self._hire_date}'
+        return f'{super.__repr__()}, {self._hire_date}'
 
 
 class Temp(Hourly):
@@ -415,4 +422,4 @@ class Temp(Hourly):
         Returns 
             list containing employee name, email, their image, hourly rate, last day.
         """
-        return f'{self.name}, {self.email}, {self.image}, {self._hourly}, {self._last_Day}'
+        return f'{super.__repr__()}, {self._last_Day}'
