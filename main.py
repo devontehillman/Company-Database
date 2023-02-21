@@ -208,7 +208,7 @@ class Hourly(Employee):
         return self._hourly * 40.0
 
     def __repr__(self):
-        return f'{super.__repr__()}, {self._hourly}'
+        return f'{super.__repr__(Employee)}, {self._hourly}'
 
 
 class Permanent(Hourly):
@@ -230,7 +230,7 @@ class Permanent(Hourly):
             self._hired_date = date
 
     def __repr__(self):
-        return f'{super.__repr__()}, {self._hired_date}'
+        return f'{super.__repr__(Hourly)}, {self._hired_date}'
 
 
 class Temp(Hourly):
@@ -254,11 +254,4 @@ class Temp(Hourly):
             self._last_day = last
 
     def __repr__(self):
-        return f'{super.__repr__()}, {self._last_day}'
-
-
-s1 = Salaried(57999, "Bobby", "Bbish@acme-machining.com")
-
-print(s1.name)
-print(s1.CURRENT_ID)
-print(s1._id_number)
+        return f'{super.__repr__(Hourly)}, {self._last_day}'
