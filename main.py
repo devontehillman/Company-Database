@@ -126,7 +126,7 @@ class Salaried(Employee):
         return self._yearly / 52.0
 
     def __repr__(self):
-        return f'{self._name}, {self._email}, {self._image}, {self.calc_pay()}'
+        return f'{super.__repr__()}, {self._yearly}'
 
 
 class Executive(Salaried):
@@ -153,7 +153,7 @@ class Executive(Salaried):
             print(ire)
 
     def __repr__(self):
-        return f'{self._name}, {self._email}, {self._image}, {self.calc_pay()}'
+        return f'{super.__repr__()}, {self._role}'
 
 
 class Manager(Salaried):
@@ -179,7 +179,7 @@ class Manager(Salaried):
             print(ide)
 
     def __repr__(self):
-        return f'{self._name}, {self._email}, {self._image}, {self.calc_pay()}'
+        return f'{super.__repr__()}, {self._department}'
 
 
 class Hourly(Employee):
@@ -208,7 +208,7 @@ class Hourly(Employee):
         return self._hourly * 40.0
 
     def __repr__(self):
-        return f'{self._name}, {self._email}, {self._image}, {self.calc_pay()}'
+        return f'{super.__repr__()}, {self._hourly}'
 
 
 class Permanent(Hourly):
@@ -230,7 +230,7 @@ class Permanent(Hourly):
             self._hired_date = date
 
     def __repr__(self):
-        return f'{self.name}, {self.email}, {self.image}, {self._hourly}, {self._hire_date}'
+        return f'{super.__repr__()}, {self._hired_date}'
 
 
 class Temp(Hourly):
@@ -254,7 +254,7 @@ class Temp(Hourly):
             self._last_day = last
 
     def __repr__(self):
-        return f'{self._name}, {self._email}, {self._image}, {self.calc_pay()}, {self._last_day}'
+        return f'{super.__repr__()}, {self._last_day}'
 
 
 s1 = Salaried(57999, "Bobby", "Bbish@acme-machining.com", 12)
