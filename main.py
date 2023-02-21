@@ -42,12 +42,12 @@ class Employee(abc.ABC):
     making heavy use of properties in this project, as is reflected in this code."""
     CURRENT_ID = 1
 
-    def __init__(self, name: str, email: str, CURRENT_ID):
-        self._id_number = CURRENT_ID
+    def __init__(self, name: str, email: str):
+        self._id_number = Employee.CURRENT_ID
         self._name = name
         self._email = email
         self._image = "./images/placeholder.png"
-        CURRENT_ID += 1
+        Employee.CURRENT_ID += 1
 
     @property
     def name(self) -> str:
@@ -104,8 +104,8 @@ class Employee(abc.ABC):
 class Salaried(Employee):
     """A Salaried Employee is one who has a yearly salary."""
 
-    def __init__(self, yearly: float, name: str, email: str, CURRENT_ID):
-        super().__init__(name, email, CURRENT_ID)
+    def __init__(self, yearly: float, name: str, email: str):
+        super().__init__(name, email)
         self._yearly = yearly
 
     @property
@@ -126,14 +126,14 @@ class Salaried(Employee):
         return self._yearly / 52.0
 
     def __repr__(self):
-        return f'{super.__repr__()}, {self._yearly}'
+        return f'{super.__repr__(Employee)}, {self._yearly}'
 
 
 class Executive(Salaried):
     """An Executive is a Salaried Employee with no additional information held."""
 
-    def __init__(self, role: str, yearly: float, name: str, email: str, CURRENT_ID):
-        super().__init__(yearly, name, email, CURRENT_ID)
+    def __init__(self, role: str, yearly: float, name: str, email: str):
+        super().__init__(yearly, name, email)
         self._role = role
 
     @property
@@ -153,15 +153,15 @@ class Executive(Salaried):
             print(ire)
 
     def __repr__(self):
-        return f'{super.__repr__()}, {self._role}'
+        return f'{super.__repr__(Salaried)}, {self._role}'
 
 
 class Manager(Salaried):
     """A Manager is a Salaried Employee with no additional information held.  May want to add
     a department, etc. for increased scope."""
 
-    def __int__(self, department: str, yearly: float, name: str, email: str, CURRENT_ID):
-        super().__init__(yearly, name, email, CURRENT_ID)
+    def __int__(self, department: str, yearly: float, name: str, email: str):
+        super().__init__(yearly, name, email)
         self._department = department
 
     @property
@@ -179,14 +179,14 @@ class Manager(Salaried):
             print(ide)
 
     def __repr__(self):
-        return f'{super.__repr__()}, {self._department}'
+        return f'{super.__repr__(Salaried)}, {self._department}'
 
 
 class Hourly(Employee):
     """An Hourly Employee adds an hourly wage."""
 
-    def __init__(self, hourly: float, name: str, email: str, CURRENT_ID):
-        super().__init__(name, email, CURRENT_ID)
+    def __init__(self, hourly: float, name: str, email: str):
+        super().__init__(name, email)
         self._hourly = hourly
 
     @property
@@ -214,8 +214,8 @@ class Hourly(Employee):
 class Permanent(Hourly):
     """Hourly Employees may be Permanent.  A Permanent Hourly Employee has a hired date."""
 
-    def __init__(self, hired_date, hourly: float, name: str, email: str, CURRENT_ID):
-        super().__init__(hourly, name, email, CURRENT_ID)
+    def __init__(self, hired_date, hourly: float, name: str, email: str):
+        super().__init__(hourly, name, email)
         self._hired_date = hired_date
 
     @property
@@ -235,8 +235,8 @@ class Permanent(Hourly):
 
 class Temp(Hourly):
     """A Temp Employee is paid hourly but has a date they can no longer work past."""
-    def __init__(self, last_day, hourly: float, name: str, email: str, CURRENT_ID):
-        super().__init__(hourly, name, email, CURRENT_ID)
+    def __init__(self, last_day, hourly: float, name: str, email: str):
+        super().__init__(hourly, name, email)
         self._last_day = last_day
 
     @property
@@ -257,6 +257,8 @@ class Temp(Hourly):
         return f'{super.__repr__()}, {self._last_day}'
 
 
-s1 = Salaried(57999, "Bobby", "Bbish@acme-machining.com", 12)
+s1 = Salaried(57999, "Bobby", "Bbish@acme-machining.com")
 
 print(s1.name)
+print(s1.CURRENT_ID)
+print(s1._id_number)
