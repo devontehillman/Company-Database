@@ -56,7 +56,8 @@ class Employee(abc.ABC):
     @name.setter
     def name(self, name) -> None:
         if name:
-            self._name = name
+            if isinstance(name, str):
+                self._name = name
         else:
             raise ValueError("Name cannot be blank.")
 
@@ -67,10 +68,11 @@ class Employee(abc.ABC):
     @email.setter
     def email(self, email):
         if email:
-            if "@acme-machining.com" in email:
-                self._email = email
-            else:
-                raise ValueError("Email must contain company field.")
+            if isinstance(email, str):
+                if "@acme-machining.com" in email:
+                    self._email = email
+                else:
+                    raise ValueError("Email must contain company field.")
         else:
             raise ValueError("Email cannot be blank.")
 
@@ -253,3 +255,8 @@ class Temp(Hourly):
 
     def __repr__(self):
         return f'{self._name}, {self._email}, {self._image}, {self.calc_pay()}, {self._last_day}'
+
+
+s1 = Salaried(57999, "Bobby", "Bbish@acme-machining.com", 12)
+
+print(s1.name)
