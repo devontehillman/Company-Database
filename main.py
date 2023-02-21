@@ -51,17 +51,17 @@ class Employee(ABC):
 
     CURRENT_ID = 1
 
-    def __init__(self, name: str, email: str, CURRENT_ID: int):
+    def __init__(self, name: str, email: str):
         self.name = name
         self.email = email
-        self.id_number = CURRENT_ID
+        self._id_number = Employee.CURRENT_ID
         self.image: str = "./images/placeholder.png"
-        CURRENT_ID += 1
+        Employee.CURRENT_ID += 1
 
     @property
     def name(self)-> str:
         """Getter for name."""
-        return self.name
+        return self._name
     
     @name.setter
     def name(self, value: str)-> None:
@@ -74,12 +74,12 @@ class Employee(ABC):
         if value == " " or "":
             raise ValueError("Name cannot be blank.")
         else:
-            self.name = value
+            self._name = value
     
     @property
     def email(self):
         """Getter for email."""
-        return self.email
+        return self._email
     
     @email.setter
     def email(self, value:str) -> None:
@@ -97,12 +97,12 @@ class Employee(ABC):
         elif "@acme-machining.com" not in value:
             raise ValueError('Email must contain "@acme-machining.com"')
         else:
-            self.email = value
+            self._email = value
     
     @property
     def id_number(self)-> int:
         """Getter for employee id."""
-        return self.id_number
+        return self._id_number
     
     def __str__(self)-> str:
         """
@@ -111,7 +111,7 @@ class Employee(ABC):
         Returns:
             Employees id and name
         """
-        id_name = "{}:{}".format(self.id_number, self.name)
+        id_name = "{}:{}".format(self._id_number, self._name)
         return id_name
 
     def __repr__(self)-> str:
@@ -122,7 +122,7 @@ class Employee(ABC):
             list containing employee name, email and their image.
         """
         #When do add generating that id with a static variable?
-        return f'{self.name}, {self.email}, {self.image}'
+        return f'{self._name}, {self._email}, {self._image}'
 
     @abstractmethod
     def calc_pay(self)-> float:
@@ -139,9 +139,9 @@ class Salaried(Employee):
     
     """
 
-    def __init__(self, name: str, email: str, image:(str), id_number: int, yearly: int):
-        super().__init__(name, email, image,id_number)
-        self._yearly = yearly
+    def __init__(self, name: str, email: str, yearly: int):
+        super().__init__(name, email)
+        self.yearly = yearly
 
     @property
     def yearly(self)-> int:
@@ -153,16 +153,6 @@ class Salaried(Employee):
         """
         return self._yearly
     
-    def __repr__(self)-> str:
-        """
-        Used for saving employee to disk.
-
-        Returns 
-            list containing employee name, email and their image, yearly salary.
-        """
-        
-        return f'{super.__repr__()}, {self._yearly}'
-
     @yearly.setter
     def yearly(self, value: int)-> None:
         """
@@ -178,6 +168,17 @@ class Salaried(Employee):
             raise ValueError("Yearly Salary to must be over $50,000.")
         else:
             self._yearly = value
+    
+    def __repr__(self)-> str:
+        """
+        Used for saving employee to disk.
+
+        Returns 
+            list containing employee name, email and their image, yearly salary.
+        """
+        
+        return f'{super.__repr__()}, {self._yearly}'
+
 
     @property
     def calc_pay(self)-> float:
@@ -200,13 +201,14 @@ class Salaried(Employee):
         #When do add generating that id with a static variable?
         return f'{super.__repr__()}, {self._yearly}'
 
+s1 = Salaried("John","John@acme-machining.com",60000)
 
 class Executive(Salaried):
     """An Executive is a Salaried Employee with no additional information held."""
 
-    def __init__(self, name: str, email: str, image: str, id_number: int, salary:float, role: Enum):
-        super().__init__(name, email, image, id_number, salary)
-        self._role = role
+    def __init__(self, name: str, email: str, salary:float, role: Enum):
+        super().__init__(name, email, salary)
+        self.role = role
 
     @property
     def role(self) -> Enum:
@@ -229,11 +231,11 @@ class Executive(Salaried):
         Raise:
             InvalidRoleException: if value does not match enum values.
         """
-        #how to check for ENUMS?
-        if not isinstance(self._role,  Role):
-            raise InvalidRoleException
-        else:
-            self._role = Role(value).name
+        #try to set role if value not found in ROLE then raise exception
+        try:
+            self._role = Role[value].value
+        except:
+            print(InvalidRoleException(f'{value} not in Roles'))
 
     def __repr__(self)-> str:
         """
@@ -245,13 +247,15 @@ class Executive(Salaried):
         return f'{super.__repr__()}, {self._role}'
 
 
+#e = Executive("John","John@acme-machining.com",60000, "CEO")
+
 class Manager(Salaried):
     """A Manager is a Salaried Employee with no additional information held.  May want to add
     a department, etc. for increased scope."""
 
-    def __init__(self, name: str, email: str, image: str, id_number: int, salary:float, department: Enum):
-        super().__init__(name, email, image, id_number, salary)
-        self._department = Department
+    def __init__(self, name: str, email: str, salary:float, department: Enum):
+        super().__init__(name, email, salary)
+        self.department = department
     
     @property
     def department(self):
@@ -285,9 +289,9 @@ class Hourly(Employee):
         _hourly(Float): Hourly employee's wage(must be between $15 and $99.99).
     """
 
-    def __init__(self, name: str, email: str, id_number:int, _hourly: float) -> None:
-        super().__init__(name, email, id_number)
-        self._hourly = _hourly
+    def __init__(self, name: str, email: str, hourly: float) -> None:
+        super().__init__(name, email)
+        self.hourly = hourly
 
     @property
     def hourly(self):
@@ -341,8 +345,8 @@ class Hourly(Employee):
 class Permanent(Hourly):
     """Hourly Employees may be Permanent.  A Permanent Hourly Employee has a hired date."""
 
-    def __init__(self, name: str, email: str, id_number:int, _hourly: float, hire_date) -> None:
-        super().__init__(name, email, id_number, _hourly)
+    def __init__(self, name: str, email: str, _hourly: float, hire_date) -> None:
+        super().__init__(name, email, _hourly)
         self._hire_date = hire_date
 
     @property
@@ -384,8 +388,8 @@ class Permanent(Hourly):
 class Temp(Hourly):
     """A Temp Employee is paid hourly but has a date they can no longer work past."""
 
-    def __init__(self, name: str, email: str, id_number:int, _hourly: float, last_Day) -> None:
-        super().__init__(name, email, id_number, _hourly)
+    def __init__(self, name: str, email: str, _hourly: float, last_Day) -> None:
+        super().__init__(name, email, _hourly)
         self._last_Day = last_Day
 
     @property
@@ -423,3 +427,22 @@ class Temp(Hourly):
             list containing employee name, email, their image, hourly rate, last day.
         """
         return f'{super.__repr__()}, {self._last_Day}'
+
+
+""" Salaried Test """
+s1 = Salaried("John","John@acme-machining.com",60000)
+print(s1._id_number)
+
+# salary under 50K
+#s2 = Salaried("John","John@acme-machining.com",30000)
+#print(s2._id_number)
+#print(s2._yearly)
+
+#salary is negative
+
+
+#Executive 
+#Permanent
+#Temp
+
+
