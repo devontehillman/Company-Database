@@ -43,10 +43,10 @@ class Employee(abc.ABC):
     CURRENT_ID = 1
 
     def __init__(self, name: str, email: str):
-        self._id_number = Employee.CURRENT_ID
-        self._name = name
-        self._email = email
-        self._image = "./images/placeholder.png"
+        self.id_number = Employee.CURRENT_ID
+        self.name = name
+        self.email = email
+        self.image = "./images/placeholder.png"
         Employee.CURRENT_ID += 1
 
     @property
@@ -55,11 +55,10 @@ class Employee(abc.ABC):
 
     @name.setter
     def name(self, name) -> None:
-        if name:
-            if isinstance(name, str):
-                self._name = name
+        if name and isinstance(name, str):
+            self._name = name
         else:
-            raise ValueError("Name cannot be blank.")
+            raise ValueError("Name cannot be blank and must be str.")
 
     @property
     def email(self) -> str:
@@ -67,14 +66,13 @@ class Employee(abc.ABC):
 
     @email.setter
     def email(self, email):
-        if email:
-            if isinstance(email, str):
-                if "@acme-machining.com" in email:
-                    self._email = email
-                else:
-                    raise ValueError("Email must contain company field.")
+        if email and isinstance(email, str):
+            if "@acme-machining.com" in email:
+                self._email = email
+            else:
+                raise ValueError("Email must contain company field.")
         else:
-            raise ValueError("Email cannot be blank.")
+            raise ValueError("Email cannot be blank and must be str.")
 
     @property
     def image(self):
@@ -82,10 +80,10 @@ class Employee(abc.ABC):
 
     @image.setter
     def image(self, link):
-        if link:
+        if link and isinstance(link, str):
             self._image = link
         else:
-            raise ValueError("Link cannot be blank.")
+            raise ValueError("Link cannot be blank and must be str.")
 
     @abc.abstractmethod
     def calc_pay(self) -> float:
@@ -106,7 +104,7 @@ class Salaried(Employee):
 
     def __init__(self, yearly: float, name: str, email: str):
         super().__init__(name, email)
-        self._yearly = yearly
+        self.yearly = yearly
 
     @property
     def yearly(self):
@@ -123,10 +121,10 @@ class Salaried(Employee):
             raise ValueError("Salary amount cannot be blank.")
 
     def calc_pay(self) -> float:
-        return self._yearly / 52.0
+        return self.yearly / 52.0
 
     def __repr__(self):
-        return f'{super.__repr__(Employee)}, {self._yearly}'
+        return f'{super().__repr__()}, {self._yearly}'
 
 
 class Executive(Salaried):
@@ -134,7 +132,7 @@ class Executive(Salaried):
 
     def __init__(self, role: str, yearly: float, name: str, email: str):
         super().__init__(yearly, name, email)
-        self._role = role
+        self.role = role
 
     @property
     def role(self):
@@ -153,16 +151,16 @@ class Executive(Salaried):
             print(ire)
 
     def __repr__(self):
-        return f'{super.__repr__(Salaried)}, {self._role}'
+        return f'{super().__repr__()}, {self._role}'
 
 
 class Manager(Salaried):
     """A Manager is a Salaried Employee with no additional information held.  May want to add
     a department, etc. for increased scope."""
 
-    def __int__(self, department: str, yearly: float, name: str, email: str):
+    def __init__(self, department: str, yearly: float, name: str, email: str):
         super().__init__(yearly, name, email)
-        self._department = department
+        self.department = department
 
     @property
     def department(self):
@@ -179,7 +177,7 @@ class Manager(Salaried):
             print(ide)
 
     def __repr__(self):
-        return f'{super.__repr__(Salaried)}, {self._department}'
+        return f'{super().__repr__()}, {self._department}'
 
 
 class Hourly(Employee):
@@ -187,7 +185,7 @@ class Hourly(Employee):
 
     def __init__(self, hourly: float, name: str, email: str):
         super().__init__(name, email)
-        self._hourly = hourly
+        self.hourly = hourly
 
     @property
     def hourly(self):
@@ -208,7 +206,7 @@ class Hourly(Employee):
         return self._hourly * 40.0
 
     def __repr__(self):
-        return f'{super.__repr__(Employee)}, {self._hourly}'
+        return f'{super().__repr__()}, {self._hourly}'
 
 
 class Permanent(Hourly):
@@ -216,7 +214,7 @@ class Permanent(Hourly):
 
     def __init__(self, hired_date, hourly: float, name: str, email: str):
         super().__init__(hourly, name, email)
-        self._hired_date = hired_date
+        self.hired_date = hired_date
 
     @property
     def hired_date(self):
@@ -230,14 +228,14 @@ class Permanent(Hourly):
             self._hired_date = date
 
     def __repr__(self):
-        return f'{super.__repr__(Hourly)}, {self._hired_date}'
+        return f'{super().__repr__()}, {self._hired_date}'
 
 
 class Temp(Hourly):
     """A Temp Employee is paid hourly but has a date they can no longer work past."""
     def __init__(self, last_day, hourly: float, name: str, email: str):
         super().__init__(hourly, name, email)
-        self._last_day = last_day
+        self.last_day = last_day
 
     @property
     def last_day(self):
@@ -254,4 +252,4 @@ class Temp(Hourly):
             self._last_day = last
 
     def __repr__(self):
-        return f'{super.__repr__(Hourly)}, {self._last_day}'
+        return f'{super().__repr__()}, {self._last_day}'
