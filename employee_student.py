@@ -11,7 +11,7 @@ Winter 2023
 from abc import ABC, abstractmethod
 from datetime import datetime
 from enum import Enum
-
+print()
 
 class InvalidRoleException(Exception):
     def __init__(self, message):
@@ -111,7 +111,7 @@ class Employee(ABC):
         Returns:
             Employees id and name
         """
-        id_name = "{}:{}".format(self._id_number, self._name)
+        id_name = "ID:{} Name:{}".format(self._id_number, self._name)
         return id_name
 
     def __repr__(self)-> str:
@@ -201,7 +201,7 @@ class Salaried(Employee):
         #When do add generating that id with a static variable?
         return f'{super.__repr__()}, {self._yearly}'
 
-s1 = Salaried("John","John@acme-machining.com",60000)
+salary1 = Salaried("John","John@acme-machining.com",60000)
 
 class Executive(Salaried):
     """An Executive is a Salaried Employee with no additional information held."""
@@ -233,7 +233,7 @@ class Executive(Salaried):
         """
         #try to set role if value not found in ROLE then raise exception
         try:
-            self._role = Role[value].value
+            self._role = Role[value].name
         except:
             print(InvalidRoleException(f'{value} not in Roles'))
 
@@ -246,8 +246,7 @@ class Executive(Salaried):
         """
         return f'{super.__repr__()}, {self._role}'
 
-
-#e = Executive("John","John@acme-machining.com",60000, "CEO")
+executive1 = Executive("Elon","John@acme-machining.com",60000, "CEO")
 
 class Manager(Salaried):
     """A Manager is a Salaried Employee with no additional information held.  May want to add
@@ -275,11 +274,13 @@ class Manager(Salaried):
         Parameters
             value(int): Integer representation for what department the manager belongs to.
         """
-        if not isinstance(self._department,  Department):
-            raise InvalidDepartmentException
-        else:
-            self.department = Department(value).name
+         #try to set role if value not found in ROLE then raise exception
+        try:
+            self._department = Department[value].name
+        except:
+            print(InvalidDepartmentException(f'{value} not in Departments'))
 
+manager1 = Manager("Steve Carell","John@acme-machining.com",70000, "FINANCE")
 
 class Hourly(Employee):
     """
@@ -341,6 +342,7 @@ class Hourly(Employee):
         #When do add generating that id with a static variable?
         return f'{super.__repr__()}, {self._hourly}'
 
+hourly1 = Hourly("Ray","John@acme-machining.com", 16)
 
 class Permanent(Hourly):
     """Hourly Employees may be Permanent.  A Permanent Hourly Employee has a hired date."""
@@ -384,6 +386,8 @@ class Permanent(Hourly):
         """
         return f'{super.__repr__()}, {self._hire_date}'
 
+permanent1 = Permanent("Wayne","John@acme-machining.com", 16.21, "09/27/1982" )
+#print(permanent1.hire_date)
 
 class Temp(Hourly):
     """A Temp Employee is paid hourly but has a date they can no longer work past."""
@@ -428,10 +432,12 @@ class Temp(Hourly):
         """
         return f'{super.__repr__()}, {self._last_Day}'
 
+temp1 = Temp("Peter","John@acme-machining.com", 16.00, "02/19/2023" )
+#print(temp1.last_Day)
 
 """ Salaried Test """
-s1 = Salaried("John","John@acme-machining.com",60000)
-print(s1._id_number)
+#s1 = Salaried("John","John@acme-machining.com",60000)
+#print(s1._id_number)
 
 # salary under 50K
 #s2 = Salaried("John","John@acme-machining.com",30000)
