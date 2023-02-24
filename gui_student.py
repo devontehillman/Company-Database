@@ -14,9 +14,9 @@ from PyQt6.QtCore import QAbstractTableModel
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QAction
 from PyQt6.QtWidgets import QLabel, QLineEdit, QMenu, QHeaderView, QTableView, QMainWindow, QAbstractItemView, \
-    QPushButton, QVBoxLayout, QListWidget, QListWidgetItem, QComboBox
-
-from employee import *
+    QPushButton, QVBoxLayout, QListWidget, QListWidgetItem, QComboBox,QApplication
+import sys
+from employee_student import *
 from typing import *
 
 
@@ -160,6 +160,9 @@ class MainWindow(QMainWindow):
         with open('./employee.data') as datafile:
             reader = csv.reader(datafile, quoting=csv.QUOTE_MINIMAL)
             for row in reader:
+                employee_type = row[0]
+                employee_name = row[1]
+
 
     def save_file(self) -> None:
         """Save a representation of all the Employees to a file."""
@@ -218,22 +221,22 @@ class EmployeeForm(QtWidgets.QWidget):
 # their custom information.
 
 class SalariedForm(EmployeeForm):
-
+    pass
 
 class ExecutiveForm(SalariedForm):
-
+    pass
 
 class ManagerForm(SalariedForm):
-
+    pass
 
 class HourlyForm(EmployeeForm):
-
+    pass
 
 class TempForm(HourlyForm):
-
+    pass
 
 class PermanentForm(HourlyForm):
-
+    pass
 
 class AboutForm(QtWidgets.QWidget):
     """An About Form just gives information about our app to users who want to see it.  Automatically
@@ -252,3 +255,13 @@ class AboutForm(QtWidgets.QWidget):
     def close_form(self) -> None:
         """Hide the form."""
         self.setVisible(False)
+
+def main():
+    #The QApplication Class requires a list parameter of command line arguments
+    #the sys.argv contains a list of command line arguments passed into a Python script
+    app= QApplication(sys.argv)
+    mf= MainWindow()
+    mf.show()
+    sys.exit(app.exec())
+if __name__ == "__main__":
+    main()
