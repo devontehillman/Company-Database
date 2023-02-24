@@ -55,7 +55,7 @@ class Employee(ABC):
         self.name = name
         self.email = email
         self._id_number = Employee.CURRENT_ID
-        self.image: str = "./images/placeholder.png"
+        self._image: str = "./images/placeholder.png"
         Employee.CURRENT_ID += 1
 
     @property
@@ -123,6 +123,19 @@ class Employee(ABC):
         """
         #When do add generating that id with a static variable?
         return f'{self._name}, {self._email}, {self._image}'
+    
+    @property
+    def image(self) -> None:
+        """Getter for image"""
+        return self._image
+    
+    @image.setter
+    def image(self, link):
+        if link and isinstance(link, str):
+            self._image = link
+        else:
+            raise ValueError("Link cannot be blank and must be str.")
+        
 
     @abstractmethod
     def calc_pay(self)-> float:
@@ -177,7 +190,7 @@ class Salaried(Employee):
             list containing employee name, email and their image, yearly salary.
         """
         
-        return f'{super.__repr__()}, {self._yearly}'
+        return f'{super().__repr__(self)}, {self._yearly}'
 
 
     @property
@@ -199,9 +212,12 @@ class Salaried(Employee):
             list containing employee name, email, their image, yearly salary.
         """
         #When do add generating that id with a static variable?
-        return f'{super.__repr__()}, {self._yearly}'
+        return f'{super().__repr__()}, {self._yearly}'
 
 salary1 = Salaried("John","John@acme-machining.com",60000)
+print(repr(salary1))
+
+salary1.salary = 100
 
 class Executive(Salaried):
     """An Executive is a Salaried Employee with no additional information held."""
@@ -244,7 +260,7 @@ class Executive(Salaried):
         Returns 
             list containing executives name, email, their image, salary, and role.
         """
-        return f'{super.__repr__()}, {self._role}'
+        return f'{super().__repr__()}, {self._role}'
 
 executive1 = Executive("Elon","John@acme-machining.com",60000, "CEO")
 
@@ -340,7 +356,7 @@ class Hourly(Employee):
             list containing employee name, email and their image and hourly rate.
         """
         #When do add generating that id with a static variable?
-        return f'{super.__repr__()}, {self._hourly}'
+        return f'{super().__repr__()}, {self._hourly}'
 
 hourly1 = Hourly("Ray","John@acme-machining.com", 16)
 
@@ -384,7 +400,7 @@ class Permanent(Hourly):
         Returns 
             list containing employee name, email, their image, hourly rate, and hire date.
         """
-        return f'{super.__repr__()}, {self._hire_date}'
+        return f'{super().__repr__()}, {self._hire_date}'
 
 permanent1 = Permanent("Wayne","John@acme-machining.com", 16.21, "09/27/1982" )
 #print(permanent1.hire_date)
@@ -430,7 +446,7 @@ class Temp(Hourly):
         Returns 
             list containing employee name, email, their image, hourly rate, last day.
         """
-        return f'{super.__repr__()}, {self._last_Day}'
+        return f'{super().__repr__()}, {self._last_Day}'
 
 temp1 = Temp("Peter","John@acme-machining.com", 16.00, "02/19/2023" )
 #print(temp1.last_Day)
