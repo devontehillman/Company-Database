@@ -261,7 +261,9 @@ def main():
     #the sys.argv contains a list of command line arguments passed into a Python script
     app= QApplication(sys.argv)
     mf= MainWindow()
-    mf.show()
+    form = EmployeeForm()
+    #mf.show()
+    form.show()
     sys.exit(app.exec())
 if __name__ == "__main__":
     main()

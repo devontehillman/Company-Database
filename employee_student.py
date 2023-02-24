@@ -50,7 +50,7 @@ class Employee(ABC):
     """
 
     CURRENT_ID = 1
-
+    IMAGE_PLACEHOLDER = "./images/placeholder.png"
     def __init__(self, name: str, email: str):
         self.name = name
         self.email = email
