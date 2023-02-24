@@ -112,13 +112,13 @@ class Salaried(Employee):
 
     @yearly.setter
     def yearly(self, yearly: float):
-        if yearly:
-            if yearly < 50000:
-                raise ValueError("Salary must be over $50,000.")
-            else:
-                self._yearly = yearly
+        if yearly and isinstance(yearly, float):
+                if yearly < 50000.0:
+                    raise ValueError("Salary must be over $50,000.")
+                else:
+                    self._yearly = yearly
         else:
-            raise ValueError("Salary amount cannot be blank.")
+            raise ValueError("Salary amount cannot be blank and must be float.")
 
     def calc_pay(self) -> float:
         return self.yearly / 52.0
