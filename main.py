@@ -113,10 +113,10 @@ class Salaried(Employee):
     @yearly.setter
     def yearly(self, yearly: float):
         if yearly and isinstance(yearly, float):
-                if yearly < 50000.0:
-                    raise ValueError("Salary must be over $50,000.")
-                else:
-                    self._yearly = yearly
+            if yearly < 50000.0:
+                raise ValueError("Salary must be over $50,000.")
+            else:
+                self._yearly = yearly
         else:
             raise ValueError("Salary amount cannot be blank and must be float.")
 
@@ -233,6 +233,7 @@ class Permanent(Hourly):
 
 class Temp(Hourly):
     """A Temp Employee is paid hourly but has a date they can no longer work past."""
+
     def __init__(self, last_day, hourly: float, name: str, email: str):
         super().__init__(hourly, name, email)
         self.last_day = last_day
