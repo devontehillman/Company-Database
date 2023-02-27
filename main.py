@@ -6,8 +6,12 @@ and Permanent and Temporary (Hourly).  Subtypes may hold custom data (but aren't
 Ira Woodring
 Winter 2023
 """
-from abc import ABC, abstractmethod
-from datetime import datetime
+import abc
+import datetime
+from datetime import *
+
+import pytest
+from pytest import *
 from enum import Enum
 
 
@@ -35,72 +39,42 @@ class Department(Enum):
     MACHINING = 5
 
 
-class Employee(ABC):
-    """
-    Employee is an abstract class that holds common information about all employees.  We will be
-    making heavy use of properties in this project, as is reflected in this code.
-
-    Attributes:
-        name(str):The name of employee. (cannot be blank).
-        email (str): The email of employee(cannot be blank and must include @acme-machining.com).
-        id_number(int):The unique id of employee.
-        image(str):The string representation of where employee photo is stored.
-    """
-
+class Employee(abc.ABC):
+    """Employee is an abstract class that holds common information about all employees.  We will be
+    making heavy use of properties in this project, as is reflected in this code."""
     CURRENT_ID = 1
 
     def __init__(self, name: str, email: str):
-        self._name = name
-        self._email = email
-        self._id_number = Employee.CURRENT_ID
-        self._image: str = "./images/placeholder.png"
+        self.id_number = Employee.CURRENT_ID
+        self.name = name
+        self.email = email
+        self.image = "./images/placeholder.png"
         Employee.CURRENT_ID += 1
 
     @property
-    def name(self)-> str:
-        """Getter for name."""
+    def name(self) -> str:
         return self._name
 
     @name.setter
-    def name(self, value: str)-> None:
-        """
-        Setter for name.
-
-        Parameters:
-            value (str): User entered name for employee.
-        """
-        if value == " " or "":
-            raise ValueError("Name cannot be blank.")
+    def name(self, name) -> None:
+        if name and isinstance(name, str):
+            self._name = name
         else:
-            self._name = value
+            raise ValueError("Name cannot be blank and must be str.")
 
     @property
-    def email(self):
-        """Getter for email."""
+    def email(self) -> str:
         return self._email
 
     @email.setter
-    def email(self, value:str) -> None:
-        """
-        Setter for email.
-
-        Parameters:
-            value(str): User entered value for email.
-
-        Raises:
-            ValueError: If value entered in is blank or does not include "@acme-machining.com"
-        """
-        if value == " " or "":
-            raise ValueError("Email cannot be blank.")
-        elif "@acme-machining.com" not in value:
-            raise ValueError('Email must contain "@acme-machining.com"')
+    def email(self, email):
+        if email and isinstance(email, str):
+            if "@acme-machining.com" in email:
+                self._email = email
+            else:
+                raise ValueError("Email must contain company field.")
         else:
-            self._email = value
-
-    @property
-    def id_number(self)-> int:
-        """Getter for employee id."""
-        return self._id_number
+            raise ValueError("Email cannot be blank and must be str.")
 
     @property
     def image(self):
@@ -108,317 +82,183 @@ class Employee(ABC):
 
     @image.setter
     def image(self, link):
-        if link:
+        if link and isinstance(link, str):
             self._image = link
         else:
-            raise ValueError("Link cannot be blank.")
+            raise ValueError("Link cannot be blank and must be str.")
 
-    def __str__(self)-> str:
-        """
-        Formatting for the employee class.
-        Returns:
-            Employees id and name
-        """
-        id_name = "{}:{}".format(self.id_number, self.name)
-        return id_name
-
-    def __repr__(self)-> str:
-        """
-        Used for saving employee to disk.
-        Returns
-            list containing employee name, email and their image.
-        """
-        #When do add generating that id with a static variable?
-        return f'{self.name}, {self.email}, {self.image}'
-
-    @abstractmethod
-    def calc_pay(self)-> float:
-        """This function calculates the weekly pay for the current employee for our pay report."""
+    @abc.abstractmethod
+    def calc_pay(self) -> float:
+        """This function calculates the weekly pay for the current
+            employee for our pay report."""
         pass
+
+    def __str__(self):
+        return str(self._id_number) + ":" + self.name
+
+    def __repr__(self):
+        # How would this format cuz this seems wrong to me
+        return f'{self._name}, {self._email}, {self._image}'
 
 
 class Salaried(Employee):
-    """
-    A Salaried Employee is one who has a yearly salary.
+    """A Salaried Employee is one who has a yearly salary."""
 
-    Attributes:
-        yearly(int): The salary for the employee(cannot be negative and be over $50,000).
-
-    """
-
-    def __init__(self, name: str, email: str,yearly: int):
+    def __init__(self, yearly: float, name: str, email: str):
         super().__init__(name, email)
         self.yearly = yearly
 
     @property
-    def yearly(self)-> int:
-        """
-        Getter for yearly salary.
-
-        Returns:
-            _yearly(int): Salaried employees yearly salary.
-        """
+    def yearly(self):
         return self._yearly
 
-    def __repr__(self)-> str:
-        """
-        Used for saving employee to disk.
-        Returns
-            list containing employee name, email and their image, yearly salary.
-        """
-
-        return f'{super.__repr__()}, {self.yearly}'
-
     @yearly.setter
-    def yearly(self, value: int)-> None:
-        """
-        The yearly salary cannot be negative, and must be over $50,000.
-
-        Returns:
-            yearly salary
-        """
-        # check user val
-        if value < 50000:
-            raise ValueError("Yearly Salary to must be over $50,000.")
+    def yearly(self, yearly: float):
+        if yearly:
+            if yearly < 50000:
+                raise ValueError("Salary must be over $50,000.")
+            else:
+                self._yearly = yearly
         else:
-            self._yearly = value
+            raise ValueError("Salary amount cannot be blank.")
 
-    @property
-    def calc_pay(self)-> float:
-        """
-        Calculates the salaried employees weekly pay.
+    def calc_pay(self) -> float:
+        return self.yearly / 52.0
 
-        Returns:
-            Salaried employees weekly pay
-        """
-        return self._yearly / 52.0
-
-    def __repr__(self)-> str:
-        """
-        Used for saving employee to disk.
-        Returns
-            list containing employee name, email, their image, yearly salary.
-        """
-        #When do add generating that id with a static variable?
-        return f'{super.__repr__()}, {self._yearly}'
+    def __repr__(self):
+        return f'{super().__repr__()}, {self._yearly}'
 
 
 class Executive(Salaried):
     """An Executive is a Salaried Employee with no additional information held."""
 
-    def __init__(self, name: str, email: str, image: str, id_number: int, salary:float, role: Enum):
-        super().__init__(name, email, image, id_number, salary)
-        self._role = role
+    def __init__(self, role: str, yearly: float, name: str, email: str):
+        super().__init__(yearly, name, email)
+        self.role = role
 
     @property
-    def role(self) -> Enum:
-        """
-        Getter for executive role.
-        Returns:
-            Executive's role.
-        """
+    def role(self):
         return self._role
 
+    #  No idea of this is how to set the role and raise exception, this is what came to mind
     @role.setter
-    def role(self, value: str)-> None:
+    def role(self, role) -> int:
         """
-        Setter for executive's role.
-        Parameters:
-            value(Enum): User value for executive's role.
-
-        Raise:
-            InvalidRoleException: if value does not match enum values.
-        """
-        #how to check for ENUMS?
-        if not isinstance(self._role,  Role):
-            raise InvalidRoleException
+        if role == Role.CEO or Role.CFO or Role.CIO:
+            self._role = role
         else:
-            self._role = Role(value).name
+            raise InvalidRoleException("Invalid role, please provide a valid role.")
+        """
+        if role not in Role._value2member_map_:
+            raise InvalidRoleException("Invalid role, please provide a valid role.")
+        else:
+            self._role = role
 
-    def __repr__(self)-> str:
-        """
-        Used for storing saving employee to disk.
-        Returns
-            list containing executives name, email, their image, salary, and role.
-        """
-        return f'{super.__repr__()}, {self.role}'
+    def __repr__(self):
+        return f'{super().__repr__()}, {self._role}'
 
 
 class Manager(Salaried):
     """A Manager is a Salaried Employee with no additional information held.  May want to add
     a department, etc. for increased scope."""
 
-    def __init__(self, name: str, email: str, image: str, id_number: int, salary:float, department: Enum):
-        super().__init__(name, email, image, id_number, salary)
-        self._department = Department
+    def __init__(self, department: str, yearly: float, name: str, email: str):
+        super().__init__(yearly, name, email)
+        self.department = department
 
     @property
     def department(self):
-        """
-        Getter for manager's department
-
-        Returns:
-            Manager's department
-        """
         return self._department
 
     @department.setter
-    def department(self, value: int)-> None:
-        """
-        Setter for managers department.
-        Parameters
-            value(int): Integer representation for what department the manager belongs to.
-        """
-        if not isinstance(self._department,  Department):
-            raise InvalidDepartmentException
+    def department(self, department):
+        if department not in Department._value2member_map_:
+            raise InvalidDepartmentException("Invalid department, please "
+                                             "provide a valid deparment.")
         else:
-            self._department = Department(value).name
+            self._department = department
+
+
+    def __repr__(self):
+        return f'{super().__repr__()}, {self._department}'
 
 
 class Hourly(Employee):
-    """
-    An Hourly Employee adds an hourly wage.
+    """An Hourly Employee adds an hourly wage."""
 
-    Attributes:
-        _hourly(Float): Hourly employee's wage(must be between $15 and $99.99).
-    """
-
-    def __init__(self, name: str, email: str, id_number:int, _hourly: float) -> None:
-        super().__init__(name, email, id_number)
-        self._hourly = _hourly
+    def __init__(self, hourly: float, name: str, email: str):
+        super().__init__(name, email)
+        self.hourly = hourly
 
     @property
     def hourly(self):
-        """
-        Setter for hourly rate of employee.
-        Returns:
-            Hourly employees rate.
-        """
         return self._hourly
 
     @hourly.setter
-    def hourly(self, value:float)-> float:
-        """
-        Setter for hourly rate of employee.
-
-        Parameters:
-            value(float): User entered hourly employee wage.
-
-        Raises:
-            ValueError: if hourly rate is not between $15 and $99.99.
-        """
-        if value < 15:
-            raise ValueError("Wage is too Low.")
-        if value > 99.99:
-            raise ValueError("Wage is too high.")
+    def hourly(self, hourly):
+        if isinstance(hourly,float) or isinstance(hourly,int):
+            if 15.0 <= hourly <= 99.99:
+                self._hourly = hourly
+            else:
+                raise ValueError("Hourly Wage cannot be less than $15 and more"
+                                     "than $99.99.")
         else:
-            self._hourly = value
+            raise ValueError("Hourly cannot be a string or blank")
 
 
-    def calc_pay(self):
-        """
-        Calculates the hourly employees weekly pay.
-        Returns:
-            Hourly employees weekly pay.
-        """
-        return self.hourly * 40
+    def calc_pay(self) -> float:
+        return self._hourly * 40.0
 
-    def __repr__(self)-> str:
-        """
-        Used for saving employee to disk.
-        Returns
-            list containing employee name, email and their image and hourly rate.
-        """
-        #When do add generating that id with a static variable?
-        return f'{super.__repr__()}, {self.hourly}'
+    def __repr__(self):
+        return f'{super().__repr__()}, {self._hourly}'
 
 
 class Permanent(Hourly):
     """Hourly Employees may be Permanent.  A Permanent Hourly Employee has a hired date."""
 
-    def __init__(self, name: str, email: str, id_number:int, _hourly: float, hire_date) -> None:
-        super().__init__(name, email, id_number, _hourly)
-        self._hire_date = hire_date
+    def __init__(self, hourly: float, name:str, email:str,hired_date =
+    date.today()):
+        super().__init__(hourly, name, email)
+        self.hired_date = hired_date
 
     @property
-    def hire_date(self):
-        """
-        Getter for hire date.
+    def hired_date(self):
+        return self._hired_date
 
-        Returns:
-            Hire date.
-        """
+    #  Need to use datetime
+    @hired_date.setter
+    def hired_date(self, hired_date):
+        if isinstance(hired_date, datetime):
+            date = datetime.datetime.strptime(hired_date, '%Y-%m-%d %H: %M: %S')
+            self._hired_date = date
+        else:
+            return ValueError("Invalid date")
 
-        return self._hire_date
-
-    @hire_date.setter
-    def hire_date(self, value: str)-> datetime:
-        """
-        Setter for hire date.
-        Parameters:
-            value(str): User value that is a string representation of a date.
-
-        Returns:
-            datetime conversion of user entered string.
-        """
-        #coverts date string into a datetime object
-        value = datetime.strptime(value,'%m/%d/%y')
-        self._hire_date = value
-
-    def __repr__(self)-> str:
-        """
-        Used for saving employee to disk.
-        Returns
-            list containing employee name, email, their image, hourly rate, and hire date.
-        """
-        return f'{super.__repr__()}, {self.hire_date}'
+    def __repr__(self):
+        return f'{super().__repr__()}, {self._hired_date}'
 
 
 class Temp(Hourly):
     """A Temp Employee is paid hourly but has a date they can no longer work past."""
-
-    def __init__(self, name: str, email: str, id_number:int, _hourly: float, last_Day) -> None:
-        super().__init__(name, email, id_number, _hourly)
-        self._last_Day = last_Day
+    def __init__(self, last_day, hourly: float, name: str, email: str):
+        super().__init__(hourly, name, email)
+        self.last_day = last_day
 
     @property
-    def last_Day(self)-> None:
-        """
-        Getter for last day.
+    def last_day(self):
+        return self._last_day
 
-        Returns:
-            Last Day.
-        """
-        return self._last_Day
+    @last_day.setter
+    def last_day(self, last_day):
+        if last_day:
+            """
+            last = datetime.date.today()
+            last = last + datetime.timedelta(days=250)
+            """
+            last = datetime.datetime.strptime(last_day, '%Y-%m-%d %H: %M: %S')
+            self._last_day = last
 
-    @last_Day.setter
-    def last_Day(self, value:str )-> datetime:
-        """
-        Setter for last day.
-        Parameters:
-            value(str): User value that is a string representation of a last day.
-
-        Returns:
-            datetime conversion of user entered string.
-        """
-        #coverts date string into a datetime object
-        value = datetime.strptime(value,'%m/%d/%y')
-        self._last_day = value
+    def __repr__(self):
+        return f'{super().__repr__()}, {self._last_day}'
 
 
-
-    def __repr__(self)-> str:
-        """
-        Used for saving employee to disk.
-        Returns
-            list containing employee name, email, their image, hourly rate, last day.
-        """
-        return f'{super.__repr__()}, {self._last_Day}'
-
-
-p = Salaried("Joe", "joe@acme-machining.com",12221)
-print(p.yearly)
-#p2 = Salaried("Guy","joe@acme-machining.com",12)
-
-print(p._id_number)
-#print(p2._id_number)
