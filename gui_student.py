@@ -156,18 +156,35 @@ class MainWindow(QMainWindow):
 
     def load_file(self) -> None:
         """Read a representation of all of our Employees from a file and store in our
-        _data variable.  The table will automatically be populated by this variable."""
+        _data variable.  The table will automatically be populated by this variable.
+        ID#", "Type", "Name", "Pay", "Email"""
         with open('./employee.data') as datafile:
             reader = csv.reader(datafile, quoting=csv.QUOTE_MINIMAL)
+            
             for row in reader:
-                employee_type = row[0]
-                employee_name = row[1]
+                name = row[2]
+                pay = float(row[3])
+                email = row[4]
+                if len(row) == 6:
+                    role = row[5]
+            
+                if row[1] == "Executive":
+                    employee = Executive(name, email, pay, role)
+                if row[1] == "Manager":
+                    employee = Manager(name, email, pay, role)
+                if row[1] == "Permanent":
+                    employee = Permanent(name, email, pay,"1243" )
+                if row[1] == "Temp":
+                    employee = Temp(name, email, pay,"1234" )
+                self._data.append(employee)
 
 
     def save_file(self) -> None:
         """Save a representation of all the Employees to a file."""
         file = open("./employee.data", "w")
-
+        for employee in self.data:
+            file.write(employee.__repr__())  
+        file.close()
 
 class EmployeeForm(QtWidgets.QWidget):
     """There will never be a generic employee form, but we don't want to repeat code
@@ -175,6 +192,7 @@ class EmployeeForm(QtWidgets.QWidget):
     def __init__(self, parent=None, employee: Employee = None, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         outer_layout = QVBoxLayout()
+        self._parent = parent
         self.layout = QtWidgets.QFormLayout()
         self.setLayout(outer_layout)
         self._id_label = QLabel()
@@ -221,10 +239,54 @@ class EmployeeForm(QtWidgets.QWidget):
 # their custom information.
 
 class SalariedForm(EmployeeForm):
-    pass
+    
+    def __init__(self, parent) -> None:
+        super().__init__(parent)
+        self._pay_edit =  QLineEdit()
+        self.layout.addRow(QLabel("Salary: "), self._pay_edit)
+    
+    
+    def fill_in(self, index) -> None:
+        """Upon opening the form, we wish to add the selected employee's data
+        to the fields."""
+        self._employee = self._parent._data[index]
+        self.setWindowTitle("Edit " + type(self._employee).__name__ + " Employee Information")
+        self._id_label.setText(str(self._employee.id_number))
+        self._name_edit.setText(self._employee.name)
+        self._email_edit.setText(self._employee.email)
+        if self._employee.image == "placeholder":
+            self._image_path_edit.setText('')
+        else:
+            self._image_path_edit.setText(self._employee.image)
+        self._image.setPixmap(QPixmap(self._employee.image))
+        self._pay_edit.setText(str(self._employee.yearly))
+        
+    def update_employee(self) -> None:
+        """Change the selected employee's data to the updated values."""
+        self._employee.name = self._name_edit.text()
+        self._employee.email = self._email_edit.text()
+        self._employee.image = self._image_path_edit.text()
+        self._employee.pay = self._pay_edit.text()
+        self._parent.refresh_width()
+        self.setVisible(False)
+
 
 class ExecutiveForm(SalariedForm):
-    pass
+    def __init__(self, parent) -> None:
+        super().__init__(parent)
+        
+        self.cb = QComboBox()
+        for role in (Role):
+            self.cb.addItem(role.name)
+        self.cb.currentIndexChanged.connect(self.selectionchange)
+
+        self.layout.addWidget(self.cb)
+    
+    def selectionchange(self,i):
+        print("Items in the list are :")
+        for count in range(self.cb.count()):
+            print(self.cb.itemText(count))
+        print("Current index"),i,"selection changed ",self.cb.currentText()
 
 class ManagerForm(SalariedForm):
     pass
@@ -261,9 +323,11 @@ def main():
     #the sys.argv contains a list of command line arguments passed into a Python script
     app= QApplication(sys.argv)
     mf= MainWindow()
-    form = EmployeeForm()
-    #mf.show()
-    form.show()
+    #form = EmployeeForm()
+    #sf = SalariedForm()
+    #sf.show()
+    mf.show()
+    #form.show()
     sys.exit(app.exec())
 if __name__ == "__main__":
     main()
