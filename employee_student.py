@@ -51,11 +51,12 @@ class Employee(ABC):
 
     CURRENT_ID = 1
     IMAGE_PLACEHOLDER = "./images/placeholder.png"
+
     def __init__(self, name: str, email: str):
         self.name = name
         self.email = email
         self._id_number = Employee.CURRENT_ID
-        self._image: str = "./images/placeholder.png"
+        self.image: str = Employee.IMAGE_PLACEHOLDER
         Employee.CURRENT_ID += 1
 
     @property
@@ -71,8 +72,10 @@ class Employee(ABC):
         Parameters:
             value (str): User entered name for employee.
         """
-        if value == " " or "":
+        if (value == " ") or (value == ""):
             raise ValueError("Name cannot be blank.")
+        elif type(value) != str:
+            raise ValueError("Name must be a string.")
         else:
             self._name = value
     
@@ -92,7 +95,7 @@ class Employee(ABC):
         Raises:
             ValueError: If value entered in is blank or does not include "@acme-machining.com"
         """
-        if value == " " or "":
+        if (value == " ") or (value == ""):
             raise ValueError("Email cannot be blank.")
         elif "@acme-machining.com" not in value:
             raise ValueError('Email must contain "@acme-machining.com"')
@@ -130,11 +133,14 @@ class Employee(ABC):
         return self._image
     
     @image.setter
-    def image(self, link):
-        if link and isinstance(link, str):
-            self._image = link
+    def image(self, link: str):
+        
+        if (link == " ") or (link == ""):
+            raise ValueError("Image path cannot be blank")
+        elif not isinstance(link, str):
+            raise ValueError("Image path must be a string")
         else:
-            raise ValueError("Link cannot be blank and must be str.")
+            self._image = link
         
 
     @abstractmethod
@@ -175,7 +181,9 @@ class Salaried(Employee):
             yearly salary
         """
         # check user val
-        if value < 0:
+        if type(value) == str:
+            raise ValueError("Yearly Salary must be a number")
+        elif value < 0:
             raise ValueError("Yearly Salary cannot be less than 0.")
         elif value < 50000:
             raise ValueError("Yearly Salary to must be over $50,000.")
@@ -200,7 +208,6 @@ class Salaried(Employee):
         
         Returns:
             Salaried employees weekly pay
-
         """
         return self._yearly / 52.0
 
@@ -214,10 +221,8 @@ class Salaried(Employee):
         #When do add generating that id with a static variable?
         return f'{super().__repr__()}, {self._yearly}'
 
-salary1 = Salaried("John","John@acme-machining.com",60000)
-print(repr(salary1))
+salary1 = Salaried("g","John@acme-machining.com",60000)
 
-salary1.salary = 100
 
 class Executive(Salaried):
     """An Executive is a Salaried Employee with no additional information held."""
