@@ -249,44 +249,42 @@ class SalariedForm(EmployeeForm):
     def fill_in(self, index) -> None:
         """Upon opening the form, we wish to add the selected employee's data
         to the fields."""
-        self._employee = self._parent._data[index]
-        self.setWindowTitle("Edit " + type(self._employee).__name__ + " Employee Information")
-        self._id_label.setText(str(self._employee.id_number))
-        self._name_edit.setText(self._employee.name)
-        self._email_edit.setText(self._employee.email)
-        if self._employee.image == "placeholder":
-            self._image_path_edit.setText('')
-        else:
-            self._image_path_edit.setText(self._employee.image)
-        self._image.setPixmap(QPixmap(self._employee.image))
+        super().fill_in(index)
         self._pay_edit.setText(str(self._employee.yearly))
         
     def update_employee(self) -> None:
         """Change the selected employee's data to the updated values."""
-        self._employee.name = self._name_edit.text()
-        self._employee.email = self._email_edit.text()
-        self._employee.image = self._image_path_edit.text()
-        self._employee.pay = self._pay_edit.text()
-        self._parent.refresh_width()
-        self.setVisible(False)
+        self._employee._yearly = float(self._pay_edit.text())
+        super().update_employee()
 
 
 class ExecutiveForm(SalariedForm):
     def __init__(self, parent) -> None:
         super().__init__(parent)
-        
+        #create combo box drop down
         self.cb = QComboBox()
-        for role in (Role):
-            self.cb.addItem(role.name)
-        self.cb.currentIndexChanged.connect(self.selectionchange)
-
-        self.layout.addWidget(self.cb)
+        #Display combo box with a label
+        self.layout.addRow(QLabel("Role"), self.cb)
     
-    def selectionchange(self,i):
-        print("Items in the list are :")
-        for count in range(self.cb.count()):
-            print(self.cb.itemText(count))
-        print("Current index"),i,"selection changed ",self.cb.currentText()
+    def fill_in(self, index) -> None:
+        """Upon opening the form, we wish to add the selected employee's data
+        to the fields."""
+        super().fill_in(index)
+        #Set first value in combobox to employees current role
+        self.cb.addItem(self._employee._role)
+        #Fill in the rest of the roles
+        for role in (Role):
+            if role == Role[self._employee._role]:
+                exit
+            else:
+                self.cb.addItem(role.name)
+        
+    
+    
+    def update_employee(self) -> None:
+        """Change the selected employee's data to the updated values."""
+        self._employee._role = (self.cb.currentText())
+        super().update_employee()
 
 class ManagerForm(SalariedForm):
     pass
