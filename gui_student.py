@@ -242,24 +242,22 @@ class SalariedForm(EmployeeForm):
     
     def __init__(self, parent) -> None:
         super().__init__(parent)
-        self._pay_edit =  QLineEdit()
+        #self._pay_edit =  QLineEdit()
         self.layout.addRow(QLabel("Salary: "), self._pay_edit)
     
     
     def fill_in(self, index) -> None:
-        """Upon opening the form, we wish to add the selected employee's data
-        to the fields."""
+        """Upon opening the form, we wish to add the selected employee's data to the fields."""
         super().fill_in(index)
         self._pay_edit.setText(str(self._employee.yearly))
         
     def update_employee(self) -> None:
-        """Change the selected employee's data to the updated values."""
         self._employee._yearly = float(self._pay_edit.text())
         super().update_employee()
 
 
 class ExecutiveForm(SalariedForm):
-    def __init__(self, parent) -> None:
+    def __init__(self, parent):
         super().__init__(parent)
         #create combo box drop down
         self.cb = QComboBox()
@@ -278,25 +276,72 @@ class ExecutiveForm(SalariedForm):
                 exit
             else:
                 self.cb.addItem(role.name)
-        
-    
-    
+
     def update_employee(self) -> None:
-        """Change the selected employee's data to the updated values."""
         self._employee._role = (self.cb.currentText())
         super().update_employee()
 
 class ManagerForm(SalariedForm):
-    pass
+    def __init__(self,parent):
+        super().__init__(parent)
+        #create combo box drop down
+        self.cb = QComboBox()
+        #Display combo box with a label
+        self.layout.addRow(QLabel("Head of Department"), self.cb)
+        
+    def fill_in(self, index) -> None:
+        """Upon opening the form, we wish to add the selected employee's data
+        to the fields."""
+        super().fill_in(index)
+        #Set first value in combobox to employees current role
+        self.cb.addItem(self._employee._department)
+        #Fill in the rest of the roles
+        for department in (Department):
+            if department == Department[self._employee._department]:
+                exit
+            else:
+                self.cb.addItem(department.name)
+
+    def update_employee(self) -> None:
+        """Change the selected employee's data to the updated values."""
+        self._employee._department = (self.cb.currentText())
+        super().update_employee()
 
 class HourlyForm(EmployeeForm):
-    pass
+    def __init__(self,parent):
+        super().__init__(parent)
+        self.layout.addRow(QLabel("Hourly Wage: "), self._pay_edit)
+
+    def fill_in(self, index) -> None:
+        """Upon opening the form, we wish to add the selected employee's data to the fields."""
+        super().fill_in(index)
+        self._pay_edit.setText(str(self._employee.hourly))
+    
+    def update_employee(self) -> None:
+        self._employee._hourly = float(self._pay_edit.text())
+        super().update_employee()
 
 class TempForm(HourlyForm):
-    pass
+    def __init__(self,parent):
+        super().__init__(parent)
+    
+    def fill_in(self, index) -> None:
+        """Upon opening the form, we wish to add the selected employee's data to the fields."""
+        super().fill_in(index)
+        self._last_day = QLabel()
+        self.layout.addRow(QLabel("Last Day:"), self._last_day)
+        self._last_day.setText(str(self._employee.last_Day))
 
 class PermanentForm(HourlyForm):
-    pass
+    def __init__(self,parent):
+        super().__init__(parent)
+    
+    def fill_in(self, index) -> None:
+        """Upon opening the form, we wish to add the selected employee's data to the fields."""
+        super().fill_in(index)
+        self._hire_date = QLabel()
+        self.layout.addRow(QLabel("Hired Date:"), self._hire_date)
+        self._hire_date.setText(str(self._employee.hire_date))
 
 class AboutForm(QtWidgets.QWidget):
     """An About Form just gives information about our app to users who want to see it.  Automatically
