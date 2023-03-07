@@ -14,7 +14,7 @@ from PyQt6.QtCore import QAbstractTableModel
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QAction
 from PyQt6.QtWidgets import QLabel, QLineEdit, QMenu, QHeaderView, QTableView, QMainWindow, QAbstractItemView, \
-    QPushButton, QVBoxLayout, QListWidget, QListWidgetItem, QComboBox,QApplication
+    QPushButton, QVBoxLayout, QListWidget, QListWidgetItem, QComboBox, QApplication
 import sys
 from employee_student import *
 from typing import *
@@ -252,7 +252,7 @@ class SalariedForm(EmployeeForm):
         self._pay_edit.setText(str(self._employee.yearly))
         
     def update_employee(self) -> None:
-        self._employee._yearly = float(self._pay_edit.text())
+        self._employee.yearly = float(self._pay_edit.text())
         super().update_employee()
 
 
@@ -278,7 +278,7 @@ class ExecutiveForm(SalariedForm):
                 self.cb.addItem(role.name)
 
     def update_employee(self) -> None:
-        self._employee._role = (self.cb.currentText())
+        self._employee.role = (self.cb.currentText())
         super().update_employee()
 
 class ManagerForm(SalariedForm):
