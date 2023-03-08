@@ -14,7 +14,7 @@ from PyQt6.QtCore import QAbstractTableModel
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QAction
 from PyQt6.QtWidgets import QLabel, QLineEdit, QMenu, QHeaderView, QTableView, QMainWindow, QAbstractItemView, \
-    QPushButton, QVBoxLayout, QListWidget, QListWidgetItem, QComboBox, QApplication
+    QPushButton, QVBoxLayout, QListWidget, QListWidgetItem, QComboBox, QApplication, QMessageBox
 import sys
 from employee_student import *
 from typing import *
@@ -165,17 +165,20 @@ class MainWindow(QMainWindow):
                 name = row[2]
                 pay = float(row[3])
                 email = row[4]
-                if len(row) == 6:
-                    role = row[5]
+    
             
                 if row[1] == "Executive":
-                    employee = Executive(name, email, pay, role)
+                    role = row[5]
+                    employee = Executive(name, email, pay, role) 
                 if row[1] == "Manager":
-                    employee = Manager(name, email, pay, role)
+                    department = row[5]
+                    employee = Manager(name, email, pay, department)
                 if row[1] == "Permanent":
-                    employee = Permanent(name, email, pay,"1243" )
+                    hire_date = row[5]
+                    employee = Permanent(name, email, pay, hire_date)
                 if row[1] == "Temp":
-                    employee = Temp(name, email, pay,"1234" )
+                    last_Day = row[5]
+                    employee = Temp(name, email, pay, last_Day)
                 self._data.append(employee)
 
 
@@ -215,11 +218,14 @@ class EmployeeForm(QtWidgets.QWidget):
 
     def update_employee(self) -> None:
         """Change the selected employee's data to the updated values."""
-        self._employee.name = self._name_edit.text()
-        self._employee.email = self._email_edit.text()
-        self._employee.image = self._image_path_edit.text()
-        self._parent.refresh_width()
-        self.setVisible(False)
+        try:
+            self._employee.name = self._name_edit.text()
+            self._employee.email = self._email_edit.text()
+            self._employee.image = self._image_path_edit.text()
+            self._parent.refresh_width()
+            self.setVisible(False)
+        except ValueError as e:
+            button = QMessageBox.critical(self, "Incorrect Information", str(e))
 
     def fill_in(self, index) -> None:
         """Upon opening the form, we wish to add the selected employee's data
@@ -252,8 +258,12 @@ class SalariedForm(EmployeeForm):
         self._pay_edit.setText(str(self._employee.yearly))
         
     def update_employee(self) -> None:
-        self._employee.yearly = float(self._pay_edit.text())
-        super().update_employee()
+        try:
+            self._employee.yearly = float(self._pay_edit.text())
+            super().update_employee()
+        except ValueError as e:
+            button = QMessageBox.critical(self, "Incorrect Information", str(e))
+
 
 
 class ExecutiveForm(SalariedForm):
