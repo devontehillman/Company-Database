@@ -281,7 +281,7 @@ class ExecutiveForm(SalariedForm):
         self.cb.addItem(self._employee._role)
         for role in Role:
             if role == Role[self._employee._role]:
-                exit
+                continue
             else:
                 self.cb.addItem(role.name)
 
