@@ -184,10 +184,12 @@ class MainWindow(QMainWindow):
 
     def save_file(self) -> None:
         """Save a representation of all the Employees to a file."""
-        file = open("./employee.data", "w")
-        for employee in self.data:
-            file.write(employee.__repr__())  
-        file.close()
+        
+        f = open("./employeesave.data", "w")
+        for employee in self._data:
+            f.write(employee.__repr__())
+            f.write("\n")
+        f.close()
 
 class EmployeeForm(QtWidgets.QWidget):
     """There will never be a generic employee form, but we don't want to repeat code
