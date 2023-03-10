@@ -1,5 +1,10 @@
-1,Executive,John Smith,50001,smith@acme-machining.com,CEO
-2,Manager,Jane Doe,60001,"doe@acme-machining.com",FINANCE
-3,Permanent,Robert Johnson,15.99,"johnson@acme-machining.com",12/13/1990
-4,Temp,Emily Brown,15,"brown@acme-machining.com", 12/13/1990
-5,Temp,Michael Lee,15,"lee@acme-machining.com", 12/13/1990
+Executive,Ira Woodring,woodriir@acme-machining.com,./images/woodring.png,37123234.67,CEO
+Manager,Henrietta Johnson,henjohnson@acme-machining.com,./images/placeholder.png,85256.63,HR
+Manager,Fenton Crackshell,fentoncrackshell@acme-machining.com,./images/placeholder.png,85256.63,ACCOUNTING
+Manager,Mick Jagger,themick@acme-machining.com,./images/placeholder.png,85256.63,FINANCE
+Manager,Dr. Emmett Brown,embrown@acme-machining.com,./images/placeholder.png,85256.63,R_AND_D
+Manager,Kaylee Frye,kayleefrye@acme-machining.com,./images/placeholder.png,85256.63,MACHINING
+Temp,Jason VanderPlaus,temp-jason@acme-machining.com,./images/placeholder.png,15.67,2023-07-28 00:00:00
+Permanent,Xiao Ling,xiaol@acme-machining.com,./images/placeholder.png,24.56,2013-03-12 00:00:00
+Executive,Ana Posada,posadaa@acme-machining.com,./images/placeholder.png,57123234.21,CIO
+Permanent,Jennifer Greene,greenj@acme-machining.com,./images/placeholder.png,25.23,2011-11-30 00:00:00
