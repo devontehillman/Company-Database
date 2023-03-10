@@ -10,6 +10,7 @@ Winter 2023
 """
 from abc import ABC, abstractmethod
 from datetime import datetime
+from dateutil.parser import parse
 from enum import Enum
 print()
 
@@ -381,7 +382,7 @@ class Permanent(Hourly):
             Hire date.
         """
         
-        return self._hire_date
+        return self._hire_date.strftime('%m/%d/%Y')
     
     @hire_date.setter
     def hire_date(self, value: str)-> datetime:
@@ -395,8 +396,7 @@ class Permanent(Hourly):
             datetime conversion of user entered string.
         """
         #coverts date string into a datetime object
-        value = datetime.strptime(value,'%m/%d/%y')
-        self._hire_date = value
+        self._hire_date = parse(value)
 
     def __repr__(self)-> str:
         """
@@ -415,7 +415,7 @@ class Temp(Hourly):
 
     def __init__(self, name: str, email: str, _hourly: float, last_Day) -> None:
         super().__init__(name, email, _hourly)
-        self._last_Day = last_Day
+        self.last_Day = last_Day
 
     @property
     def last_Day(self)-> None:
@@ -425,7 +425,9 @@ class Temp(Hourly):
         Returns: 
             Last Day.
         """
-        return self._last_Day
+        
+
+        return self._last_day.strftime('%m/%d/%Y')
     
     @last_Day.setter
     def last_Day(self, value:str )-> datetime:
@@ -439,8 +441,7 @@ class Temp(Hourly):
             datetime conversion of user entered string.
         """
         #coverts date string into a datetime object
-        value = datetime.strptime(value,'%m/%d/%y')
-        self._last_day = value
+        self._last_day = parse(value)
 
 
 
@@ -451,10 +452,10 @@ class Temp(Hourly):
         Returns 
             list containing employee name, email, their image, hourly rate, last day.
         """
-        return f'{super().__repr__()},{self._last_Day}'
+        return f'{super().__repr__()},{self._last_day}'
 
 temp1 = Temp("Peter","John@acme-machining.com", 16.00, "02/19/2023" )
-#print(temp1.last_Day)
+print(temp1.last_Day)
 
 """ Salaried Test """
 #s1 = Salaried("John","John@acme-machining.com",60000)

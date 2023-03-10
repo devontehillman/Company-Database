@@ -162,32 +162,47 @@ class MainWindow(QMainWindow):
             reader = csv.reader(datafile, quoting=csv.QUOTE_MINIMAL)
             
             for row in reader:
-                name = row[2]
-                pay = float(row[3])
-                email = row[4]
-    
+                name = row[1]
+                image = row[3]
+                pay = float(row[4])
+                email = row[2]
             
-                if row[1] == "Executive":
+                if row[0] == "Executive":
                     role = row[5]
                     employee = Executive(name, email, pay, role) 
-                if row[1] == "Manager":
+                if row[0] == "Manager":
                     department = row[5]
                     employee = Manager(name, email, pay, department)
-                if row[1] == "Permanent":
+                if row[0] == "Permanent":
                     hire_date = row[5]
                     employee = Permanent(name, email, pay, hire_date)
-                if row[1] == "Temp":
+                if row[0] == "Temp":
                     last_Day = row[5]
                     employee = Temp(name, email, pay, last_Day)
+                if image != "./images/placeholder.png":
+                    employee.image = image
                 self._data.append(employee)
 
 
     def save_file(self) -> None:
         """Save a representation of all the Employees to a file."""
-        
+
         f = open("./employeesave.data", "w")
         for employee in self._data:
+            employee_department = ""
+            if type(employee) is  Executive:
+                class_name = "Executive,"
+            elif type(employee) is  Manager:
+                class_name = "Manager,"
+                employee_department = "," + employee.department
+            elif type(employee) is  Permanent:
+                class_name = "Permanent,"
+            else:
+                class_name = "Temp,"
+            f.write(class_name)  
             f.write(employee.__repr__())
+            if employee_department != "":
+                f.write(employee_department)
             f.write("\n")
         f.close()
 
