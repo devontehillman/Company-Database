@@ -187,7 +187,7 @@ class MainWindow(QMainWindow):
     def save_file(self) -> None:
         """Save a representation of all the Employees to a file."""
 
-        f = open("./employeesave.data", "w")
+        f = open("./employee.data", "w")
         for employee in self._data:
             employee_department = ""
             if type(employee) is  Executive:
