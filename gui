@@ -162,6 +162,8 @@ class MainWindow(QMainWindow):
     def load_file(self) -> None:
         """Read a representation of all of our Employees from a file and store in our
         _data variable.  The table will automatically be populated by this variable."""
+        if self._data:
+            return
         with open('./employee.data') as datafile:
             reader = csv.reader(datafile, quoting=csv.QUOTE_MINIMAL)
             for row in reader:
@@ -169,21 +171,19 @@ class MainWindow(QMainWindow):
                 email = row[2]
                 picture = row[3]
                 payment = float(row[4])
-                print(name, email, picture, payment)
-
-                if len(row) == 6:
-                    role = row[5]
-                    print(role)
+                role = row[5]
                 if row[0] == "Executive":
-                    employee = Executive(role, payment, name, email)
+                    employee = Executive(role, payment, name, email, picture)
                 if row[0] == "Manager":
-                    employee = Manager(role, payment, name, email)
+                    employee = Manager(role, payment, name, email, picture)
                 if row[0] == "Temp":
-                    employee = Temp(payment, name, email, role)
+                    employee = Temp(payment, name, email, picture, role)
                 if row[0] == "Permanent":
-                    employee = Permanent(payment, name, email, role)
-
-                self._data.append((employee))
+                    employee = Permanent(payment, name, email, picture, role)
+                if employee not in self._data:
+                    self._data.append((employee))
+                else:
+                    continue
 
 
 
@@ -242,7 +242,7 @@ class EmployeeForm(QtWidgets.QWidget):
         self._id_label.setText(str(self._employee.id_number))
         self._name_edit.setText(self._employee.name)
         self._email_edit.setText(self._employee.email)
-        if self._employee.image == "placeholder":
+        if self._employee.image == "./images/placeholder.png":
             self._image_path_edit.setText('')
         else:
             self._image_path_edit.setText(self._employee.image)
@@ -252,6 +252,10 @@ class EmployeeForm(QtWidgets.QWidget):
 # their custom information.
 
 class SalariedForm(EmployeeForm):
+    """
+    Adds a new row and label titled Salary, and displays the employees
+    salary in that label.
+    """
     def __init__(self, parent) -> None:
         super().__init__(parent)
         self.layout.addRow(QLabel("Salary: "), self._pay_edit)
@@ -269,6 +273,10 @@ class SalariedForm(EmployeeForm):
 
 
 class ExecutiveForm(SalariedForm):
+    """
+    Adds a combo box that allows users to select a role. and displays the
+    employees role in that combo box.
+    """
     def __init__(self, parent):
         super().__init__(parent)
         self.cb = QComboBox()
@@ -291,6 +299,10 @@ class ExecutiveForm(SalariedForm):
 
 
 class ManagerForm(SalariedForm):
+    """
+    Adds a combo box that allows users to select a department, and displays
+    the employees department in that combo box.
+    """
     def __init__(self, parent):
         super().__init__(parent)
         self.cb = QComboBox()
@@ -311,6 +323,10 @@ class ManagerForm(SalariedForm):
 
 
 class HourlyForm(EmployeeForm):
+    """
+    Adds a new row and label titled Hourly, and displays the employees
+    hourly wage in that label.
+    """
     def __init__(self, parent) -> None:
         super().__init__(parent)
         self.layout.addRow(QLabel("Hourly: "), self._pay_edit)
@@ -328,6 +344,10 @@ class HourlyForm(EmployeeForm):
 
 
 class TempForm(HourlyForm):
+    """
+    Adds a new row and label titled Last day, and displays the employees
+    last day in that label.
+    """
     def __init__(self, parent) -> None:
         super().__init__(parent)
         self._last_day_label = QLabel()
@@ -342,6 +362,10 @@ class TempForm(HourlyForm):
 
 
 class PermanentForm(HourlyForm):
+    """
+    Adds a new row and label titled Hired date, and displays the employees
+    hire date in that label.
+    """
     def __init__(self, parent) -> None:
         super().__init__(parent)
         self._hired_date_label = QLabel()
@@ -380,6 +404,12 @@ class AboutForm(QtWidgets.QWidget):
 app = QApplication(sys.argv)
 window = MainWindow()
 window.show()
+sys.exit(app.exec())
+
+
+
+
+
 sys.exit(app.exec())
 
 
