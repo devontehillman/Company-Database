@@ -5,6 +5,8 @@ but cannot have generics of these either.  Our concrete types are Executives and
 and Permanent and Temporary (Hourly).  Subtypes may hold custom data (but aren't required to).
 Ira Woodring
 Winter 2023
+
+Connor Shock
 """
 import abc
 import datetime
@@ -16,22 +18,38 @@ from enum import Enum
 
 
 class InvalidRoleException(Exception):
+    """
+    Creates an exception to raise if the role inputed for an employee is
+    incorrect.
+    """
     def __init__(self, message):
         super().__init__(message)
 
 
 class InvalidDepartmentException(Exception):
+    """
+    Creates an exception to raise if the role inputed for an employee is
+    incorrect.
+    """
     def __init__(self, message):
         super().__init__(message)
 
 
 class Role(Enum):
+    """
+    Role Class: Links a role to a number from 1 to 3. Allows the employees
+    to have assigned roles.
+    """
     CEO = 1
     CFO = 2
     CIO = 3
 
 
 class Department(Enum):
+    """
+    Department Class: Links a department to a number from 1 to 5. Allows the
+    employees to have assigned departments.
+    """
     ACCOUNTING = 1
     FINANCE = 2
     HR = 3
@@ -40,24 +58,37 @@ class Department(Enum):
 
 
 class Employee(abc.ABC):
-    """Employee is an abstract class that holds common information about all employees.  We will be
-    making heavy use of properties in this project, as is reflected in this code."""
-    CURRENT_ID = 1
-    IMAGE_PLACEHOLDER = "./images/place.png"
+    """Employee Class: an abstract class that holds common information
+    about all employees. All child forms will inherit from this form.
 
-    def __init__(self, name: str, email: str):
+    Parameter:
+        Name: Employees Full Name
+        Email: A valid email ending in @acme-machining.com
+        Image: The pathway to the users image.
+    """
+    CURRENT_ID = 1
+    IMAGE_PLACEHOLDER = "./images/placeholder.png"
+
+    def __init__(self, name: str, email: str, image: str):
         self.id_number = Employee.CURRENT_ID
         self.name = name
         self.email = email
-        self.image = "./images/place.png"
+        self.image = image
         Employee.CURRENT_ID += 1
 
     @property
     def name(self) -> str:
+        """
+        Name method: Returns the employees name
+        """
         return self._name
 
     @name.setter
     def name(self, name) -> None:
+        """
+        Name setter method: Sets a name for an employee only if its a valid
+        string.
+        """
         if name and isinstance(name, str):
             self._name = name
         else:
@@ -65,10 +96,16 @@ class Employee(abc.ABC):
 
     @property
     def email(self) -> str:
+        """
+        Email method: Returns the employees email
+        """
         return self._email
 
     @email.setter
     def email(self, email):
+        """
+        Email setter method: Sets a valid email for the employee
+        """
         if email and isinstance(email, str):
             if "@acme-machining.com" in email:
                 self._email = email
@@ -79,10 +116,17 @@ class Employee(abc.ABC):
 
     @property
     def image(self):
+        """
+        Image method: Returns the string for the location of the image.
+        """
         return self._image
 
     @image.setter
     def image(self, link):
+        """
+        Image setter method: Sets the image location to a valid string.
+        Cannot be blank
+        """
         if link and isinstance(link, str):
             self._image = link
         else:
@@ -103,18 +147,35 @@ class Employee(abc.ABC):
 
 
 class Salaried(Employee):
-    """A Salaried Employee is one who has a yearly salary."""
+    """
+    Salaried Employee Class: Holds information for a salaried employee,
+    includes yearly salary.
 
-    def __init__(self, yearly: float, name: str, email: str):
-        super().__init__(name, email)
+    Parameters:
+        name: Employee Name
+        email: Employees email
+        image: Employees image
+        yearly: Employees yearly salary
+    """
+
+    def __init__(self, yearly: float, name: str, email: str, image: str):
+        super().__init__(name, email, image)
         self.yearly = yearly
 
     @property
     def yearly(self):
+        """
+        Yearly method: Returns the amount a employee makes yearly.
+        :return:
+        """
         return self._yearly
 
     @yearly.setter
     def yearly(self, yearly: float):
+        """
+        Yearly setter method: Sets the amount an employee is paid yearly.
+        Must be greater than 50,000
+        """
         if yearly:
             if yearly < 50000:
                 raise ValueError("Salary must be over $50,000.")
@@ -124,6 +185,9 @@ class Salaried(Employee):
             raise ValueError("Salary amount cannot be blank.")
 
     def calc_pay(self) -> float:
+        """
+        Calculates the weekly pay.
+        """
         return self.yearly / 52.0
 
     def __repr__(self):
@@ -131,29 +195,36 @@ class Salaried(Employee):
 
 
 class Executive(Salaried):
-    """An Executive is a Salaried Employee with no additional information held."""
+    """
+    Executive Class: Class that creates executive employees. Allows
+    employees to be assigned a role.
 
-    def __init__(self, role: str, yearly: float, name: str, email: str):
-        super().__init__(yearly, name, email)
+    Parameters:
+        name: Employee Name
+        email: Employees email
+        image: Employees image
+        yearly: Employees yearly salary
+        role: Employees Role (CEO, CIO, CFO)
+    """
+
+    def __init__(self, role: str, yearly: float, name: str, email: str,
+                 image: str):
+        super().__init__(yearly, name, email, image)
         self.role = role
 
     @property
     def role(self):
+        """
+        Role method: returns the employees role.
+        """
         return self._role
 
     #  No idea of this is how to set the role and raise exception, this is what came to mind
     @role.setter
     def role(self, role) -> int:
         """
-        if role == Role.CEO or Role.CFO or Role.CIO:
-            self._role = role
-        else:
-            raise InvalidRoleException("Invalid role, please provide a valid role.")
-        """
-        """
-        if Direction[employee[4]] in Direction
-        for direction in Direction
-        if role not in Role["CEO"]
+        Role setter method: Sets a role for the employees, must be a valid
+        role linked to the Role Class.
         """
         if role not in Role._member_names_:
             raise InvalidRoleException("Invalid role, please provide a valid role.")
@@ -165,19 +236,36 @@ class Executive(Salaried):
 
 
 class Manager(Salaried):
-    """A Manager is a Salaried Employee with no additional information held.  May want to add
-    a department, etc. for increased scope."""
+    """
+    Manager Class: Allows a manager employee to be created. Is given a
+    department to be head of.
 
-    def __init__(self, department: str, yearly: float, name: str, email: str):
-        super().__init__(yearly, name, email)
+    Parameters:
+        name: Employee Name
+        email: Employees email
+        image: Employees image
+        yearly: Employees yearly salary
+        department: Employees Department that they are head of
+    """
+
+    def __init__(self, department: str, yearly: float, name: str, email:
+    str, image: str):
+        super().__init__(yearly, name, email, image)
         self.department = department
 
     @property
     def department(self):
+        """
+        department method: Returns the employees department
+        """
         return self._department
 
     @department.setter
     def department(self, department):
+        """
+        department setter method: Sets a deparment for the manager, must be
+        a valid department from the Department Class.
+        """
         if department not in Department._member_names_:
             raise InvalidDepartmentException("Invalid department, please "
                                              "provide a valid deparment.")
@@ -190,18 +278,34 @@ class Manager(Salaried):
 
 
 class Hourly(Employee):
-    """An Hourly Employee adds an hourly wage."""
+    """
+    Hourly Employee Class: Allows the creation of hourly employees, that get
+    paid an hourly wage instead of a yearly salary.
 
-    def __init__(self, hourly: float, name: str, email: str):
-        super().__init__(name, email)
+    Parameters:
+        name: Employee Name
+        email: Employees email
+        image: Employees image
+        hourly: Employees hourly salary
+    """
+
+    def __init__(self, hourly: float, name: str, email: str, image: str):
+        super().__init__(name, email, image)
         self.hourly = hourly
 
     @property
     def hourly(self):
+        """
+        hourly method: Returns the employees hourly wage.
+        """
         return self._hourly
 
     @hourly.setter
     def hourly(self, hourly):
+        """
+        Hourly setter method: Sets an employees hourly wage, must be higher
+        than 15$ and hour and less than 100$.
+        """
         if isinstance(hourly,float) or isinstance(hourly,int):
             if 15.0 <= hourly <= 99.99:
                 self._hourly = hourly
@@ -213,6 +317,10 @@ class Hourly(Employee):
 
 
     def calc_pay(self) -> float:
+        """
+        Calculates the weekly pay for an hourly employee.
+
+        """
         return self._hourly * 40.0
 
     def __repr__(self):
@@ -220,25 +328,42 @@ class Hourly(Employee):
 
 
 class Permanent(Hourly):
-    """Hourly Employees may be Permanent.  A Permanent Hourly Employee has a hired date."""
+    """
+    Permanent Class: Allows for the creation of permanent hourly employees.
+    Includes the date they were hired.
 
-    def __init__(self, hourly: float, name:str, email:str, hire_date: str):
-        super().__init__(hourly, name, email)
+    Parameters:
+        name: Employee Name
+        email: Employees email
+        image: Employees image
+        hourly: Employees hourly salary
+        hired_date: Datetime that the employee was hired
+    """
+
+    def __init__(self, hourly: float, name:str, email:str, image:str,
+        hire_date: str):
+        super().__init__(hourly, name, email, image)
         self.hired_date = hire_date
 
 
     @property
     def hired_date(self):
+        """
+        hired date method: Returns the employees hire date.
+        """
         return self._hired_date
 
     #  Need to use datetime
     @hired_date.setter
     def hired_date(self, value):
         """
+        hired date setter method: Sets the hire date datetime value for an
+        employee.
         if isinstance(startdate, datetime):
             self._hired_date = startdate
         else:
             return ValueError("Invalid date")
+
         """
         value = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
         self._hired_date = value
@@ -248,18 +373,33 @@ class Permanent(Hourly):
 
 
 class Temp(Hourly):
-    """A Temp Employee is paid hourly but has a date they can no longer work past."""
-    def __init__(self, hourly: float, name: str, email: str, last_day):
-        super().__init__(hourly, name, email)
+    """
+    Temp Class: An hourly employee that can only work till a specific date.
+
+    Parameters:
+        name: Employee Name
+        email: Employees email
+        image: Employees image
+        hourly: Employees hourly salary
+        last_day: Datetime value for employees last day.
+    """
+    def __init__(self, hourly: float, name: str, email: str, image: str,
+        last_day):
+        super().__init__(hourly, name, email, image)
         self.last_day = last_day
 
     @property
     def last_day(self):
+        """
+        last day method: Returns the employees last day
+        """
         return self._last_day
 
     @last_day.setter
     def last_day(self, last_day):
         """
+        last day setter method: Sets the datetime value for the employees
+        last day.
         if isinstance(last_day, datetime):
             self._last_day = last_day
         else:
